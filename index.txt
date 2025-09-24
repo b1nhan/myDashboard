@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cá nhân</title>
+    <script src="https://cdn.tailwindcss.com">  </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dashboard-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-areas:
+                "stats  "
+                "checklist1"
+                "checklist2"
+                "checklist3"
+                "checklist4"
+                "textbox";
+        }
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-areas:
+                    "stats stats stats"
+                    "checklist1 checklist2 textbox"
+                    "checklist3 checklist4 textbox";
+            }
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e5e7eb;
+        }
+        .card-header {
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #111827;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .scrollable-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .stat-item {
+            width: 10rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0.5rem;
+            font-weight: 600;
+            /* border-bottom: 2px solid hsl(0, 0%, 85%);  */
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .task-item {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+        }
+        .task-item-checkbox {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 4px;
+            border: 1px solid #6b7280;
+            cursor: pointer;
+        }
+        .task-item-checkbox:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .task-item-text {
+            color: #374151;
+            flex-grow: 1;
+            cursor:pointer;
+        }
+        .deadline {
+            color: #ef4444;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-left: auto;
+            cursor:pointer;
+
+        }
+        .resource-link {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .resource-link:hover {
+            text-decoration: underline;
+        }
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            white-space: nowrap;
+        }
+        .btn-add:hover{
+            background-color: hsl(122, 39%, 45%);
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.25rem;
+            margin-left: 0.5rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #stats-card { 
+            grid-area: stats; 
+            display: flex; 
+            flex-direction: row; 
+            justify-content: space-around;
+        }
+        #work-card { grid-area: checklist1; height: 350px; }
+        #learning-card { grid-area: checklist2; height: 350px; }
+        #life-card { grid-area: checklist3; height: 350px; }
+        #goals-card { grid-area: checklist4; height: 350px; }
+        #notes-card {grid-area: textbox; height: 715px;}
+        #notes-card textarea { min-height: 80%;}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Dashboard</h1>
+
+        <div id="dashboard-container" class="dashboard-grid">
+
+            <!-- Card 1: Thống kê nhanh -->
+            <div id="stats-card" class="card">
+                <div class="card-header" style="margin: 0;">
+                    <span>Thống kê nhanh</span>
+                </div>
+                <div class="stat-item">
+                    <span>Tổng</span>
+                    <span class="font-bold text-lg" id="total-stats">0</span>
+                </div>
+                <div class="stat-item text-[#FF0000]">
+                    <span>Deadline</span>
+                    <span class="font-bold text-lg" id="deadlines">0</span>
+                </div>
+                <div class="stat-item text-[#6484F0]">
+                    <span>Công việc</span>
+                    <span class="font-bold text-lg" id="works-to-do">0</span>
+                </div>
+                <div class="stat-item text-[#88D31F]">
+                    <span>Cần học</span>
+                    <span class="font-bold text-lg" id="need-to-learn">0</span>
+                </div>
+                <div class="stat-item text-[#5941F2]">
+                    <span>Việc cần làm</span>
+                    <span class="font-bold text-lg" id="tasks-to-do">0</span>
+                </div>
+                <div class="stat-item text-[#EF8D29]">
+                    <span>Mục tiêu</span>
+                    <span class="font-bold text-lg" id="current-goals">0</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Công việc và Deadline -->
+            <div id="work-card" class="card">
+                <div class="card-header">
+                    <span>Công việc</span>
+                    <button class="btn-add ml-auto" onclick="openModal('work')">Thêm mới</button>
+                </div>
+                <div class="scrollable-content">
+                    <ul class="task-list" id="work-list">
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 3: Học tập -->
+            <div id="learning-card" class="card">
+                <div class="card-header">
+                    <span>Học tập</span>
+                    <button class="btn-add ml-auto" onclick="openModal('learning')">Thêm mới</button>
+                </div>
+                <div class="scrollable-content">
+                    <ul class="task-list" id="learning-list">
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 4: Đời sống -->
+            <div id="life-card" class="card">
+                <div class="card-header">
+                    <span>Đời sống</span>
+                    <button class="btn-add ml-auto" onclick="openModal('life')">Thêm mới</button>
+                </div>
+                <div class="scrollable-content">
+                    <ul class="task-list" id="life-list">
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 5: Mục tiêu -->
+            <div id="goals-card" class="card">
+                <div class="card-header">
+                    <span>Mục tiêu</span>
+                    <button class="btn-add ml-auto" onclick="openModal('goals')">Thêm mới</button>
+                </div>
+                <div class="scrollable-content">
+                    <ul class="task-list" id="goals-list">
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Card 6: Ghi chú (dạng textbox) -->
+            <div id="notes-card" class="card pb-1">
+                <div class="card-header">
+                    <span>Ghi chú</span>
+                </div>
+                <textarea id="noteText" class="flex-grow w-full h-full p-2 border rounded-md" placeholder="Nhập ghi chú của bạn vào đây..." spellcheck="false"></textarea>
+                <button type="submit" id="submitButton"class="btn-add px-[20px] m-2 mr-0 ml-auto">Lưu</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal for adding new task -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title" class="text-2xl font-semibold mb-4">Thêm nội dung mới</h2>
+            <form id="addTaskForm">
+                <input type="hidden" id="taskType">
+                <input type="hidden" id="taskID">
+                <div class="mb-4">
+                    <label for="taskName" class="block text-gray-700 font-semibold mb-2">Tên nội dung:</label>
+                    <input type="text" id="taskName" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    
+                    <label class="inline-flex items-center cursor-pointer mb-2">
+                        <span class="block pr-3 text-gray-700 font-semibold">Ngày kết thúc</span>
+                        <input type="checkbox" id="dateButtonTgg" value="" class="sr-only peer">
+                        <div class="relative w-11 h-6 bg-gray-200 rounded-full peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                    <input type="date" id="taskDate" class="hidden w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" id="submitButton"class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition-colors">Thêm</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('myModal');
+        const taskForm = document.getElementById('addTaskForm');
+        const taskNameInput = document.getElementById('taskName');
+        const taskDateInput = document.getElementById('taskDate');
+        const taskTypeInput = document.getElementById('taskType');
+        const modalTitle = document.getElementById('modal-title');
+        const submitButton = document.getElementById('submitButton');
+        const taskIDInput = document.getElementById('taskID');
+        const noteSaveButton = document.getElementById('submitButton');
+        const noteText = document.getElementById('noteText');
+        
+        // Date input toggle
+        const taskDateButton = document.getElementById('dateButtonTgg');
+        let isChecked = false;
+        taskDateButton.addEventListener('change', (event) => {
+            isChecked = event.target.checked;
+            if (isChecked) {
+                taskDateInput.classList.remove('hidden');
+                const date = new Date();
+                taskDateInput.value=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,0)}-${String(date.getDate()).padStart(2,0)}`;
+            } 
+            else {
+                taskDateInput.classList.add('hidden');
+                taskDateInput.value='';
+            }
+        });
+
+        async function fetchTasks() {
+            try {
+                const response = await fetch('/api/tasks');
+                const tasks = await response.json();
+                
+                // Clear existing lists
+                document.getElementById('work-list').innerHTML = '';
+                document.getElementById('learning-list').innerHTML = '';
+                document.getElementById('life-list').innerHTML = '';
+                document.getElementById('goals-list').innerHTML = '';
+                
+                tasks.forEach(task => {
+                    renderTask(task);
+                });
+                updateStats();
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+            }
+        }
+
+        function renderTask(task) {
+            const taskList = document.getElementById(`${task.type}-list`);
+            if (!taskList) return;
+
+            const li = document.createElement('li');
+            li.className = 'task-item';
+            li.dataset.id = task.id;
+
+            let dateDisplay = '';
+            if (task.deadline) {
+                const daysRemaining = getDaysRemaining(task.deadline);
+                const DaysPassed = getDaysPassed(task.deadline);
+                if (daysRemaining < 0) {
+                    dateDisplay = `Đã quá hạn ${DaysPassed} ngày`;
+                } else if (daysRemaining === 0) {
+                    dateDisplay = `Hôm nay`;
+                } else {
+                    dateDisplay = `Còn ${daysRemaining} ngày`;
+                }
+            }
+            
+            li.innerHTML = `
+                <input type="checkbox" class="task-item-checkbox" ${task.is_completed ? 'checked' : ''} onchange="toggleTaskCompletion(${task.id}, this.checked)">
+                <span class="task-item-text ${task.is_completed ? 'line-through text-gray-400' : ''}">${task.name}</span>
+                ${task.deadline ? `<span class="deadline">${dateDisplay}</span>` : ''}
+                <button class="btn-delete" onclick="deleteTask(${task.id})">&#x2715;</button>
+            `;
+            li.querySelector('.task-item-text').addEventListener('click', () => openModalUpdate(task));
+            if (task.deadline) {
+                li.querySelector('.deadline').addEventListener('click', () => openModalUpdate(task));
+            }
+
+            taskList.appendChild(li);
+        }
+
+        // fetch note
+        async function fetchNote(){
+            try {
+                const response = await fetch('/api/note');
+                const note = await response.json();
+                
+                // Clear existing note
+                document.getElementById('noteText').value = '';
+                
+                renderNote(note);
+            } catch (error) {
+                console.error('Error fetching note:', error);
+            }
+        }
+
+        function renderNote(note) {
+            if (!note) return;
+            document.getElementById('noteText').value = `${note[0].content}`;
+        }
+
+        // Update note
+        noteSaveButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const noteContent = noteText.value;
+            if(!noteContent) return;
+
+            try {
+                await fetch('/api/note', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content:noteContent })
+                });
+                fetchNote(); // Refresh note
+            } catch (error) {
+                console.error('Error adding note:', error);
+            }
+        });
+
+        // Open Modal
+        function openModal(type) {
+            modalTitle.textContent = 'Thêm nội dung mới';
+            submitButton.textContent = 'Thêm';
+            taskIDInput.value = ''; // Đặt id về rỗng
+            taskNameInput.value = ''; // Xóa dữ liệu cũ
+            taskDateInput.value = '';
+
+            modal.style.display = 'flex';
+            taskTypeInput.value = type;
+        }
+
+        // Close Modal
+        function closeModal() {
+            modal.style.display = 'none';
+            taskDateInput.classList.add('hidden');
+            taskForm.reset();
+        }
+
+        // Open Modal Update
+        function openModalUpdate(task){
+            modalTitle.textContent = 'Chỉnh sửa';
+            submitButton.textContent = 'Lưu';
+            taskIDInput.value = task.id; // Đặt id của task cần sửa
+            taskNameInput.value = task.name; // Điền dữ liệu cũ vào form
+            if (task.buttonChecked) {
+                taskDateInput.classList.remove('hidden');
+                taskDateButton.checked=true;
+                const isoDate = task.deadline;
+                const date = new Date(isoDate);
+
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+
+                taskDateInput.value = `${year}-${month}-${day}`;
+            }
+            else{
+                taskDateInput.classList.add('hidden');
+                taskDateInput.value='';
+            }
+
+            modal.style.display = 'flex';
+            taskTypeInput.value = task.type;
+        }
+
+        // Calculate days remaining
+        function getDaysRemaining(endDate) {
+            const today = new Date();
+            const end = new Date(endDate);
+            const timeDifference = end.getTime() - today.getTime();
+            const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+            return daysRemaining;
+        }
+
+        // Calculate days passed
+        function getDaysPassed(endDate) {
+            const today = new Date();
+            const end = new Date(endDate);
+            const timeDifference = - end.getTime() + today.getTime();
+            const DaysPassed = Math.ceil(timeDifference / (1000 * 3600 * 24));
+            return DaysPassed;
+        }
+
+        // Handle form submission to add new task
+        taskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const taskName = taskNameInput.value;
+            const taskDate = taskDateInput.value;
+            const taskType = taskTypeInput.value;
+            const taskID = taskIDInput.value;
+            
+            try {
+                if(taskID){
+                    await fetch(`/api/tasks/full/${taskID}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: taskName, type: taskType, deadline: taskDate?taskDate:'1111-11-11' })
+                    });
+                }
+                else{
+                    await fetch('/api/tasks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: taskName, type: taskType, deadline: taskDate?taskDate:'1111-11-11' })
+                    });
+                }
+                fetchTasks(); // Refresh list
+                closeModal();
+            } catch (error) {
+                console.error('Error adding task:', error);
+            }
+        });
+
+        // Delete a task
+        async function deleteTask(id) {
+            try {
+                await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+                fetchTasks(); // Refresh list
+            } catch (error) {
+                console.error('Error deleting task:', error);
+            }
+        }
+
+        // Toggle task completion
+        async function toggleTaskCompletion(id, is_completed) {
+            try {
+                await fetch(`/api/tasks/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_completed })
+                });
+                fetchTasks(); // Refresh list
+            } catch (error) {
+                console.error('Error updating task:', error);
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = document.querySelectorAll('.task-list .task-item').length;
+            const deadlines = document.querySelectorAll('.task-list .task-item .deadline').length;
+            const worksToDo = document.querySelectorAll('#work-list .task-item').length;
+            const needToLearn = document.querySelectorAll('#learning-list .task-item').length;
+            const tasksToDo = document.querySelectorAll('#life-list .task-item').length;
+            const currentGoals = document.querySelectorAll('#goals-list .task-item').length;
+
+            document.getElementById('total-stats').textContent = total;
+            document.getElementById('deadlines').textContent = deadlines;
+            document.getElementById('works-to-do').textContent = worksToDo;
+            document.getElementById('need-to-learn').textContent = needToLearn;
+            document.getElementById('tasks-to-do').textContent = tasksToDo;
+            document.getElementById('current-goals').textContent = currentGoals;
+        }
+
+        // Initial fetch on page load
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+        document.addEventListener('DOMContentLoaded', fetchNote);
+    </script>
+</body>
+</html>
