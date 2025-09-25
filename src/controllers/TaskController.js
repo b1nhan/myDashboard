@@ -1,8 +1,6 @@
 const Task = require('../models/Task');
 
 class TaskController{
-    
-    
 
     static async getAllTasks(req, res){
         try {
@@ -55,7 +53,7 @@ class TaskController{
             });
         }
         catch (err){
-            console.error('Error updating task 1:', err);
+            console.error('Error updating task status:', err);
             return res.status(500).send('Error updating task');
         }
     }
