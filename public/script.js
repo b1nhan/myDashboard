@@ -30,7 +30,6 @@ taskDateButton.addEventListener('change', (event) => {
 
 async function fetchTasks() {
     try {
-
         const token = localStorage.getItem('token')
         const response = await fetch(`${API_BASE_URL}/api/tasks`,{
             headers:{
@@ -335,3 +334,5 @@ document.addEventListener('DOMContentLoaded', ()=>{
     fetchNote();
   }
 });
+
+// random line
