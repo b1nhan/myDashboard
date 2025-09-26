@@ -21,7 +21,7 @@ class User {
     }
 
     static async getUsername(userID){
-        const result = await db.execute('SELECT username FROM users WHERE user_id = ?',[userID]);
+        const [[result]] = await db.execute('SELECT username FROM users WHERE id = ?',[userID]);
         return result;
         
     }

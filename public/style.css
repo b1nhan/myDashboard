@@ -4,6 +4,7 @@ body {
     background-color: #f3f4f6;
     color: #1f2937;
     padding: 2rem;
+    padding-top: 1rem;
 }
 .container {
     max-width: 1200px;
@@ -104,20 +105,20 @@ body {
 .resource-link:hover {
     text-decoration: underline;
 }
-.btn-add {
-    background-color: #4CAF50;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    white-space: nowrap;
-}
-.btn-add:hover{
-    background-color: hsl(122, 39%, 45%);
-}
+    .btn-add {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        white-space: nowrap;
+    }
+    .btn-add:hover{
+        background-color: hsl(122, 39%, 45%);
+    }
 
 .btn-delete {
     background: none;

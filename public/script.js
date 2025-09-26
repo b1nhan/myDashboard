@@ -8,6 +8,7 @@ const submitButton = document.getElementById('submitButton');
 const taskIDInput = document.getElementById('taskID');
 const noteSaveButton = document.getElementById('submitButton');
 const noteText = document.getElementById('noteText');
+const logoutButton = document.getElementById('btn-logout');
 
 // Date input toggle
 const taskDateButton = document.getElementById('dateButtonTgg');
@@ -282,9 +283,44 @@ function updateStats() {
     document.getElementById('current-goals').textContent = currentGoals;
 }
 
-// Initial fetch on page load
-document.addEventListener('DOMContentLoaded', fetchTasks);
-document.addEventListener('DOMContentLoaded', fetchNote);
+async function getUsername(){
+    try{
+        const token = localStorage.getItem('token')
+        const response = await fetch('/api/users',{
+            headers:{
+            'Authorization': `Bearer ${token}`
+        }});
+        const user = await response.json();
+        const username = user.username;
+
+        return username;
+
+    }
+    catch (err){
+        console.log('error get username: ', err);
+    }
+}
+
+async function displayUsername(){
+    const username = await getUsername();
+
+    logoutButton.textContent= username;
+    logoutButton.style.backgroundColor= 'white';
+    logoutButton.style.color= 'black';
+    
+    logoutButton.addEventListener('mouseover', e =>{
+        logoutButton.style.transform = "scale(1.1)";
+        logoutButton.textContent= 'Đăng xuất';
+        logoutButton.style.backgroundColor= 'hsl(122, 39%, 45%)';
+        logoutButton.style.color= 'white';
+    })
+    logoutButton.addEventListener('mouseout', e =>{
+        logoutButton.style.transform = "scale(1)";
+        logoutButton.textContent= username;
+        logoutButton.style.backgroundColor= 'white';
+        logoutButton.style.color= 'black';
+    })
+}
 
 document.addEventListener('DOMContentLoaded', ()=>{
     if (!isLoggedIn()) {
@@ -292,6 +328,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     console.log('please loggin');
   } else {
     // Nếu đã đăng nhập, tải dữ liệu tasks từ API
+    displayUsername();
     fetchTasks();
+    fetchNote();
   }
 });
