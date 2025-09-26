@@ -1,4 +1,4 @@
-const API_BASE_URL = window.API_BASE_URL;
+// const API_BASE_URL = window.API_BASE_URL;
 
 const modal = document.getElementById('myModal');
 const taskForm = document.getElementById('addTaskForm');
@@ -31,7 +31,7 @@ taskDateButton.addEventListener('change', (event) => {
 async function fetchTasks() {
     try {
         const token = localStorage.getItem('token')
-        const response = await fetch(`${API_BASE_URL}/api/tasks`,{
+        const response = await fetch(`${window.API_BASE_URL}/api/tasks`,{
             headers:{
             'Authorization': `Bearer ${token}`
         }});
@@ -91,7 +91,7 @@ function renderTask(task) {
 async function fetchNote(){
     try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${API_BASE_URL}/api/note`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/note`, {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -122,7 +122,7 @@ noteSaveButton.addEventListener('click', async (e) => {
     const token = localStorage.getItem("token");
 
     try {
-        await fetch(`${API_BASE_URL}/api/note`, {
+        await fetch(`${window.API_BASE_URL}/api/note`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ taskForm.addEventListener('submit', async (e) => {
     try {
         const token = localStorage.getItem('token');
         if(taskID){
-            await fetch(`${API_BASE_URL}/api/tasks/full/${taskID}`, {
+            await fetch(`${window.API_BASE_URL}/api/tasks/full/${taskID}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
@@ -220,7 +220,7 @@ taskForm.addEventListener('submit', async (e) => {
             });
         }
         else{
-            await fetch(`${API_BASE_URL}/api/tasks`, {
+            await fetch(`${window.API_BASE_URL}/api/tasks`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
@@ -239,7 +239,7 @@ taskForm.addEventListener('submit', async (e) => {
 async function deleteTask(id) {
     try {
         const token = localStorage.getItem('token');
-        await fetch(`${API_BASE_URL}/api/tasks/${id}`, { 
+        await fetch(`${window.API_BASE_URL}/api/tasks/${id}`, { 
             method: 'DELETE',
             headers:{
             'Authorization': `Bearer ${token}`}
@@ -254,7 +254,7 @@ async function deleteTask(id) {
 async function toggleTaskCompletion(id, is_completed) {
     try {
         const token = localStorage.getItem('token');
-        await fetch(`${API_BASE_URL}/api/tasks/${id}`, {
+        await fetch(`${window.API_BASE_URL}/api/tasks/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -287,7 +287,7 @@ function updateStats() {
 async function getUsername(){
     try{
         const token = localStorage.getItem('token')
-        const response = await fetch(`${API_BASE_URL}/api/users`,{
+        const response = await fetch(`${window.API_BASE_URL}/api/users`,{
             headers:{
             'Authorization': `Bearer ${token}`
         }});
