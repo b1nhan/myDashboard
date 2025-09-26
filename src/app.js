@@ -23,6 +23,6 @@ app.use(cors({
 app.use('/api', apiRoutes);
 app.use('/api', apiRoutesAuth);
 
-// app.listen(port, () => {
-//     console.log(`Server is running at http://localhost:${port}`);
-// });
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});

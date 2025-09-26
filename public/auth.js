@@ -1,3 +1,5 @@
+const API_BASE_URL = window.API_BASE_URL;
+
 // Ví dụ gọi API được bảo vệ
 // async function getTasks() {
 //     const token = localStorage.getItem('token');
@@ -20,7 +22,7 @@
 //         alert(tasks.message);
 //     }
 // }
-      
+
 async function handleLogin(event) {
     event.preventDefault(); // Ngăn form submit
     const username = document.getElementById('username').value;
@@ -31,7 +33,7 @@ async function handleLogin(event) {
     messageBox.textContent = '';
     messageBox.className = 'mt-4 p-3 rounded-lg text-sm text-center hidden';
 
-    const response = await fetch('/api/login', {
+    const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -77,7 +79,7 @@ async function handleRegister(event){
     }
 
     
-    const response = await fetch('/api/register', {
+    const response = await fetch(`${API_BASE_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
