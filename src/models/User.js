@@ -19,6 +19,12 @@ class User {
         const user = rows[0];
         return user;
     }
+
+    static async getUsername(userID){
+        const result = await db.execute('SELECT username FROM users WHERE user_id = ?',[userID]);
+        return result;
+        
+    }
 }
 
 module.exports = User;

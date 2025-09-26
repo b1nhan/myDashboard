@@ -40,6 +40,17 @@ class UserController {
             res.status(500).json({ message: 'Lỗi server.' });
         }
     }
+
+    static async getUsername(req, res){
+        try {
+            const userID = req.user.id;
+            const username= await User.getUsername(userID);
+            res.json(username);
+        } catch (error) {
+            console.error('Error get username:', error);
+            res.status(500).send('Error get username');
+        }
+    }
 }
 
 module.exports = UserController;

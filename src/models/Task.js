@@ -1,20 +1,21 @@
 const db = require('../config/db');
 
 class Task{
-    static async getAllTasks() {
-        const [rows] = await db.execute('SELECT * FROM tasks');
+    static async getAllTasks(userID) {
+        const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ?', [userID]);
         return rows;
     }
 
     static async addNewTask(userID, taskData){
         const {name, type, deadline, buttonChecked} = taskData;
 
-        const sql = 'INSERT INTO tasks (name, type, deadline, buttonChecked) VALUE (?,?,?,?) WHERE user_id = ?';
+        const sql = 'INSERT INTO tasks (user_id, name, type, deadline, buttonChecked) VALUE (?,?,?,?,?)';
 
-        const [result] = await db.execute(sql, [name, type, deadline, buttonChecked, userID]);
+        const [result] = await db.execute(sql, [userID, name, type, deadline, buttonChecked]);
 
-        return result={
+        return {
             id: result.insertId,
+            user_id:userID,
             name,
             type,
             deadline,
@@ -25,7 +26,7 @@ class Task{
 
     static async updateTask(userID, id, is_completed){
 
-        const sql =' UPDATE tasks SET is_completed = ? WHERE is = ? AND user_id = ?';
+        const sql ='UPDATE tasks SET is_completed = ? WHERE id = ? AND user_id = ?';
         const result = await db.execute(sql, [is_completed, id, userID]);
 
         if (result.affectedRows === 0) {
@@ -37,10 +38,10 @@ class Task{
     }
 
     static async updateTaskFull(userID, id, taskData){
-        const {name, type, deadline, is_completed, buttonChecked} = taskData;
+        const {name, type, deadline, buttonChecked} = taskData;
 
-        const sql=' UPDATE tasks SET name = ?, type = ?, deadline = ?, is_complete = ?, buttonChecked = ? WHERE id = ? AND user_id = ?';
-        const result = await db.execute(sql, [name, type, deadline, is_completed, buttonChecked, id, userID]);
+        const sql=' UPDATE tasks SET name = ?, type = ?, deadline = ?, buttonChecked = ? WHERE id = ? AND user_id = ?';
+        const result = await db.execute(sql, [name, type, deadline, buttonChecked, id, userID]);
 
         if (result.affectedRows === 0) {
             throw new Error('Task not found');

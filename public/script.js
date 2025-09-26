@@ -27,7 +27,12 @@ taskDateButton.addEventListener('change', (event) => {
 
 async function fetchTasks() {
     try {
-        const response = await fetch('/api/tasks');
+
+        const token = localStorage.getItem('token')
+        const response = await fetch('/api/tasks',{
+            headers:{
+            'Authorization': `Bearer ${token}`
+        }});
         const tasks = await response.json();
         
         // Clear existing lists
@@ -83,12 +88,19 @@ function renderTask(task) {
 // fetch note
 async function fetchNote(){
     try {
-        const response = await fetch('/api/note');
+        const token = localStorage.getItem("token");
+        const response = await fetch('/api/note', {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+        });
+
         const note = await response.json();
         
         // Clear existing note
         document.getElementById('noteText').value = '';
         
+        // console.log(note);
         renderNote(note);
     } catch (error) {
         console.error('Error fetching note:', error);
@@ -96,7 +108,7 @@ async function fetchNote(){
 }
 
 function renderNote(note) {
-    if (!note) return;
+    if (!(note[0])) return;
     document.getElementById('noteText').value = `${note[0].content}`;
 }
 
@@ -105,11 +117,15 @@ noteSaveButton.addEventListener('click', async (e) => {
     e.preventDefault();
     const noteContent = noteText.value;
     if(!noteContent) return;
+    const token = localStorage.getItem("token");
 
     try {
         await fetch('/api/note', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ content:noteContent })
         });
         fetchNote(); // Refresh note
@@ -191,17 +207,22 @@ taskForm.addEventListener('submit', async (e) => {
     const taskID = taskIDInput.value;
     
     try {
+        const token = localStorage.getItem('token');
         if(taskID){
             await fetch(`/api/tasks/full/${taskID}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ name: taskName, type: taskType, deadline: taskDate?taskDate:'1111-11-11' })
             });
         }
         else{
             await fetch('/api/tasks', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                 },
                 body: JSON.stringify({ name: taskName, type: taskType, deadline: taskDate?taskDate:'1111-11-11' })
             });
         }
@@ -215,7 +236,12 @@ taskForm.addEventListener('submit', async (e) => {
 // Delete a task
 async function deleteTask(id) {
     try {
-        await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        const token = localStorage.getItem('token');
+        await fetch(`/api/tasks/${id}`, { 
+            method: 'DELETE',
+            headers:{
+            'Authorization': `Bearer ${token}`}
+         });
         fetchTasks(); // Refresh list
     } catch (error) {
         console.error('Error deleting task:', error);
@@ -225,9 +251,12 @@ async function deleteTask(id) {
 // Toggle task completion
 async function toggleTaskCompletion(id, is_completed) {
     try {
+        const token = localStorage.getItem('token');
         await fetch(`/api/tasks/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+             },
             body: JSON.stringify({ is_completed })
         });
         fetchTasks(); // Refresh list
@@ -256,3 +285,13 @@ function updateStats() {
 // Initial fetch on page load
 document.addEventListener('DOMContentLoaded', fetchTasks);
 document.addEventListener('DOMContentLoaded', fetchNote);
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    if (!isLoggedIn()) {
+    redirectToLogin();
+    console.log('please loggin');
+  } else {
+    // Nếu đã đăng nhập, tải dữ liệu tasks từ API
+    fetchTasks();
+  }
+});

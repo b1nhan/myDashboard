@@ -29,7 +29,7 @@ class TaskController{
                 buttonChecked
             };
 
-            const newTask = await Task.addNewTask(userID,taskData);
+            const newTask = await Task.addNewTask(userID, taskData);
 
             res.status(201).json(newTask);
         }
@@ -72,7 +72,6 @@ class TaskController{
                 name,
                 type,
                 deadline,
-                is_completed,
                 buttonChecked
             };
 
