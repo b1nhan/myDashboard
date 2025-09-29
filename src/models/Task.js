@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 class Task{
     static async getAllTasks(userID) {
-        const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ?', [userID]);
+        const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? order by deadline is null, deadline asc', [userID]);
         return rows;
     }
 

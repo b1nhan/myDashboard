@@ -43,20 +43,6 @@ async function fetchTasks() {
         document.getElementById('life-list').innerHTML = '';
         document.getElementById('goals-list').innerHTML = '';
         
-        tasks.sort((a, b) => {
-            // Ưu tiên: task CÓ deadline sẽ đứng trước task KHÔNG CÓ deadline.
-            if (a.deadline === null && b.deadline !== null) {
-                return 1; // b > a (null)
-            }
-            if (a.deadline !== null && b.deadline === null) {
-                return -1; // a > b (null)
-            }
-            if (a.deadline === null && b.deadline === null) {
-                return 0; //a==b
-            }
-
-            return new Date(a.deadline) - new Date(b.deadline);
-        });
         tasks.forEach(task => {
             renderTask(task);
         });
