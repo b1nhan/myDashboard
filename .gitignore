@@ -1,3 +1,4 @@
 node_modules/
 .env
 index.txt
+public/config.js

@@ -114,7 +114,7 @@ function Logout(){
 
 function isLoggedIn() {
   const token = localStorage.getItem('token');
-  if (!token) return false; //
+  if (!token) return false; 
 
   try {
     // Lấy payload (phần giữa của JWT)
