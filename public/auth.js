@@ -105,8 +105,6 @@ async function handleRegister(event){
         break;
     }
 
-    
-    
 }
 
 function Logout(){
@@ -116,7 +114,25 @@ function Logout(){
 
 function isLoggedIn() {
   const token = localStorage.getItem('token');
-  return !!token; // Trả về true nếu token tồn tại
+  if (!token) return false; //
+
+  try {
+    // Lấy payload (phần giữa của JWT)
+    const payloadBase64 = token.split('.')[1];
+    const payload = JSON.parse(atob(payloadBase64));
+
+    const now = Math.floor(Date.now() / 1000);
+
+    // Kiểm tra exp
+    if (payload.exp && payload.exp > now) {
+      return true; // Token còn hạn
+    } else {
+      return false; // Token hết hạn
+    }
+  } catch (e) {
+    //token lỗi format
+    return false;
+  }
 }
 
 function redirectToLogin() {
