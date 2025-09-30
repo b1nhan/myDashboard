@@ -9,6 +9,7 @@ router.get('/tasks', authMiddleware, TaskController.getAllTasks);
 router.get('/note', authMiddleware, NoteController.getNote);
 router.post('/tasks', authMiddleware, TaskController.addNewTask);
 router.post('/note', authMiddleware, NoteController.setNote);
+router.post('/tasks/reorder', authMiddleware, TaskController.updateTaskOrder);
 router.put('/tasks/:id', authMiddleware, TaskController.updateTask);
 router.put('/tasks/full/:id', authMiddleware, TaskController.updateTaskFull);
 router.delete('/tasks/:id', authMiddleware, TaskController.deleteTask);

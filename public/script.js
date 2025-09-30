@@ -59,6 +59,11 @@ function renderTask(task) {
     const li = document.createElement('li');
     li.className = 'task-item';
     li.dataset.id = task.id;
+    li.setAttribute('draggable', 'true');
+
+    const deadlineDate = task.deadline ? new Date(task.deadline).toISOString().substring(0, 10) : 'no-deadline';
+    li.dataset.group = `${task.type}-${deadlineDate}`;
+
 
     let dateDisplay = '';
     if (task.deadline) {
@@ -84,8 +89,137 @@ function renderTask(task) {
         li.querySelector('.deadline').addEventListener('click', () => openModalUpdate(task));
     }
 
+    li.addEventListener('dragstart', handleDragStart);
+    li.addEventListener('dragend', handleDragEnd);
+    li.addEventListener('dragover', handleDragOver);
+    li.addEventListener('drop', handleDrop);
+
+    taskList.addEventListener('dragover', handleDragOver);
+    taskList.addEventListener('drop', handleDrop);
+
     taskList.appendChild(li);
 }
+
+let draggedItem = null; 
+let placeholder = document.createElement('div');
+placeholder.classList.add('placeholder');
+
+function handleDragStart(e) {
+    draggedItem = this; 
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => {
+        this.classList.add('dragging');
+        this.parentElement.insertBefore(placeholder, this.nextSibling); 
+    }, 0); 
+}
+
+function handleDragOver(e) {
+    e.preventDefault(); 
+    e.dataTransfer.dropEffect = 'move';
+    
+    const targetItem = this;
+    
+    if (!draggedItem || draggedItem === targetItem) {
+        return; 
+    }
+    
+    if (draggedItem.dataset.group !== targetItem.dataset.group) {
+        return; 
+    }
+    
+    const list = targetItem.parentElement; 
+    const afterElement = getDragAfterElement(list, e.clientY); // Hàm tìm vị trí
+
+    if (afterElement === draggedItem) return;
+
+    if (afterElement == null) {
+        list.appendChild(placeholder);
+    } else {
+        list.insertBefore(placeholder, afterElement);
+    }
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.task-item:not(.dragging)')];
+
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2; 
+
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: -Infinity }).element;
+}
+
+function handleDragEnd() {
+    this.classList.remove('dragging');
+    draggedItem = null;
+    
+    // Xóa placeholder
+    if (placeholder.parentElement) {
+        placeholder.parentElement.removeChild(placeholder);
+    }
+
+    updateTaskOrder(this.parentElement.id); 
+}
+
+
+async function updateTaskOrder(listId) {
+    const listElement = document.getElementById(listId);
+    if (!listElement) return;
+
+    const taskItems = listElement.querySelectorAll('.task-item');
+    const newOrderIds = Array.from(taskItems).map(li => parseInt(li.dataset.id));
+    
+    if (newOrderIds.length === 0) return;
+
+    // Lấy thông tin nhóm từ item đầu tiên
+    const firstItem = taskItems[0];
+    const [taskType, groupKey] = firstItem.dataset.group.split('-');
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${window.API_BASE_URL}/api/tasks/reorder`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                taskType: taskType,
+                groupKey: groupKey,
+                tasksIDList: newOrderIds 
+            })
+        });
+
+        if (!response.ok) {
+            fetchTasks(); 
+            throw new Error('Failed to update task order');
+        }
+        
+    } catch (error) {
+        console.error('Error update task order:', error);
+    }
+}
+
+/**
+ * Xử lý khi item được thả (Drop).
+ * @param {DragEvent} e 
+ */
+function handleDrop(e) {
+    e.preventDefault(); 
+    e.stopPropagation();
+
+    if (draggedItem && placeholder.parentElement) {
+        // Thay thế placeholder bằng item đang được kéo
+        placeholder.parentElement.insertBefore(draggedItem, placeholder);
+        placeholder.parentElement.removeChild(placeholder);
+    }
+}
+
 
 // fetch note
 async function fetchNote(){

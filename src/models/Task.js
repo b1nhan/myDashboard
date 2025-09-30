@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 class Task{
     static async getAllTasks(userID) {
-        const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? order by deadline is null, deadline asc', [userID]);
+        const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? order by deadline is null, deadline asc, order_index asc', [userID]);
         return rows;
     }
 
@@ -23,6 +23,25 @@ class Task{
             buttonChecked
         }
     }
+
+    static async updateTaskOrder(userID, tasksIDList) {
+
+        const results = await Promise.all(tasksIDList.map((taskId, index) => {
+            return db.query(
+                'UPDATE tasks SET order_index = ? WHERE id = ? AND user_id = ?',
+                [index, taskId, userID]
+            );
+        }));
+
+        // Kiểm tra xem có task nào không được update
+        const notUpdated = results.filter(r => r[0].affectedRows === 0);
+        if (notUpdated.length > 0) {
+            throw new Error('Some tasks not found or not updated');
+        }
+
+        return { message: 'Task order updated successfully' };
+    }
+
 
     static async updateTask(userID, id, is_completed){
 

@@ -39,6 +39,24 @@ class TaskController{
         }
     };
 
+    static async updateTaskOrder(req, res){
+        try{
+            const tasksIDList = req.body.tasksIDList;
+            const userID = req.user.id;
+
+            await Task.updateTaskOrder(userID, tasksIDList);
+
+            res.json({
+                message: 'Update task order successfully'
+            })
+        }
+        catch (err){
+            console.error(req.body.tasksIDList, 'Error updating task order:', err);
+            return res.status(500).send('Error updating task order');
+        }
+
+    }
+
     static async updateTask(req, res){
         try{
             const userID = req.user.id;
