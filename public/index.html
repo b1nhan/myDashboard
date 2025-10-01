@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>myDashboard</title>
-    <script src="https://cdn.tailwindcss.com">  </script>
+    <!-- <script src="https://cdn.tailwindcss.com">  </script> -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.5/dist/purify.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link href="/output.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -51,12 +54,20 @@
             <div id="work-card" class="card">
                 <div class="card-header">
                     <span>Công việc</span>
-                    <button class="btn-add ml-auto" onclick="openModal('work')">Thêm mới</button>
+                    <div class="btn-container ml-auto">
+                        <button class="btn-edit" onclick="changeTextView('work')">Sửa</button>
+                        <button class="btn-add " onclick="openModal('work')">Thêm mới</button>
+                    </div>
                 </div>
-                <div class="scrollable-content">
+                <div class="scrollable-content" id="work-list-interface">
                     <ul class="task-list" id="work-list">
                     </ul>
                     <button class="btn-add ml-auto py-1 px-3" onclick="openModal('work')">Thêm</button>
+                </div>
+
+                <div class="min-h-[65%] min-w-[100%] ml-auto" id="work-taskRawTextInterface" style="display: none;">
+                    <textarea id="work-raw-text" class="flex-grow w-full h-full p-2 border rounded-md" placeholder="[] Ten (dd/mm/yy)" spellcheck="false"></textarea>
+                    <button type="submit" id="work-taskRawTextSubmitButton" class="btn-add ml-[75%] px-[20px]">Lưu</button>
                 </div>
             </div>
 
@@ -64,12 +75,20 @@
             <div id="learning-card" class="card">
                 <div class="card-header">
                     <span>Học tập</span>
-                    <button class="btn-add ml-auto" onclick="openModal('learning')">Thêm mới</button>
+                    <div class="btn-container ml-auto">
+                        <button class="btn-edit" onclick="changeTextView('learning')">Sửa</button>
+                        <button class="btn-add " onclick="openModal('learning')">Thêm mới</button>
+                    </div>
                 </div>
-                <div class="scrollable-content">
+                <div class="scrollable-content" id="learning-list-interface">
                     <ul class="task-list" id="learning-list">
                     </ul>
                     <button class="btn-add ml-auto py-1 px-3" onclick="openModal('learning')">Thêm</button>
+                </div>
+
+                <div class="min-h-[65%] min-w-[100%] ml-auto" id="learning-taskRawTextInterface" style="display: none;">
+                    <textarea id="learning-raw-text" class="flex-grow w-full h-full p-2 border rounded-md" placeholder="Vd: [] Ten (dd/mm/yy)" spellcheck="false"></textarea>
+                    <button type="submit" id="learning-taskRawTextSubmitButton" class="btn-add ml-[75%] px-[20px]">Lưu</button>
                 </div>
             </div>
 
@@ -77,12 +96,19 @@
             <div id="life-card" class="card">
                 <div class="card-header">
                     <span>Đời sống</span>
-                    <button class="btn-add ml-auto" onclick="openModal('life')">Thêm mới</button>
+                    <div class="btn-container ml-auto">
+                        <button class="btn-edit" onclick="changeTextView('life')">Sửa</button>
+                        <button class="btn-add " onclick="openModal('life')">Thêm mới</button>
+                    </div>
                 </div>
-                <div class="scrollable-content">
+                <div class="scrollable-content" id="life-list-interface">
                     <ul class="task-list" id="life-list">
                     </ul>
                     <button class="btn-add ml-auto py-1 px-3" onclick="openModal('life')">Thêm</button>
+                </div>
+                <div class="min-h-[65%] min-w-[100%] ml-auto" id="life-taskRawTextInterface" style="display: none;">
+                    <textarea id="life-raw-text" class="flex-grow w-full h-full p-2 border rounded-md" placeholder="[] Ten (dd/mm/yy)" spellcheck="false"></textarea>
+                    <button type="submit" id="life-taskRawTextSubmitButton" class="btn-add ml-[75%] px-[20px]">Lưu</button>
                 </div>
             </div>
 
@@ -90,13 +116,22 @@
             <div id="goals-card" class="card">
                 <div class="card-header">
                     <span>Mục tiêu</span>
-                    <button class="btn-add ml-auto" onclick="openModal('goals')">Thêm mới</button>
+                    <div class="btn-container ml-auto">
+                        <button class="btn-edit" onclick="changeTextView('goals')">Sửa</button>
+                        <button class="btn-add " onclick="openModal('goals')">Thêm mới</button>
+                    </div>
                 </div>
-                <div class="scrollable-content">
+                <div class="scrollable-content" id="goals-list-interface">
                     <ul class="task-list" id="goals-list">
                     </ul>
                     <button class="btn-add ml-auto py-1 px-3" onclick="openModal('goals')">Thêm</button>
                 </div>
+
+                <div class="min-h-[65%] min-w-[100%] ml-auto" id="goals-taskRawTextInterface" style="display: none;">
+                    <textarea id="goals-raw-text" class="flex-grow w-full h-full p-2 border rounded-md" placeholder="[] Ten (dd/mm/yy)" spellcheck="false"></textarea>
+                    <button type="submit" id="goals-taskRawTextSubmitButton" class="btn-add ml-[75%] px-[20px]">Lưu</button>
+                </div>
+
             </div>
             
             <!-- Card 6: Ghi chú (dạng textbox) -->
@@ -104,8 +139,9 @@
                 <div class="card-header">
                     <span>Ghi chú</span>
                 </div>
-                <textarea id="noteText" class="flex-grow w-full h-full p-2 border rounded-md" placeholder="Nhập ghi chú của bạn vào đây..." spellcheck="false"></textarea>
-                <button type="submit" id="submitButton"class="btn-add px-[20px] m-2 mr-0 ml-auto">Lưu</button>
+                <div id="noteView" class="prose w-full h-full p-2 border rounded-md scrollable-content cursor-pointer"></div>
+                <textarea id="noteText" class="flex-grow w-full h-full p-2 border rounded-md hidden" placeholder="Nhập ghi chú của bạn vào đây..." spellcheck="false"></textarea>
+                <button type="submit" id="noteSubmitButton"class="btn-add px-[20px] m-2 mr-0 ml-auto">Lưu</button>
             </div>
             
         </div>

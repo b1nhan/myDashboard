@@ -8,8 +8,9 @@ const taskTypeInput = document.getElementById('taskType');
 const modalTitle = document.getElementById('modal-title');
 const submitButton = document.getElementById('submitButton');
 const taskIDInput = document.getElementById('taskID');
-const noteSaveButton = document.getElementById('submitButton');
+const noteSaveButton = document.getElementById('noteSubmitButton');
 const noteText = document.getElementById('noteText');
+const noteView = document.getElementById('noteView');
 const logoutButton = document.getElementById('btn-logout');
 
 // Date input toggle
@@ -100,6 +101,33 @@ function renderTask(task) {
     taskList.appendChild(li);
 }
 
+async function fetchTaskInText(type) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${window.API_BASE_URL}/api/tasks?${type}`,{
+            headers:{
+            'Authorization': `Bearer ${token}`
+        }});
+        const tasks = await response.json();
+        
+        // Clear text
+        document.getElementById(`${type}-raw-text`).value= '';
+        
+        let resultValue ='';
+        tasks.forEach(task => {
+            // renderTaskInText(task,type);
+            let taskDateValue = null;
+            if(task.deadline) {taskDateValue = new Date(task.deadline);}
+            let string=`[${task.is_completed?'x':''}] ${task.name} ${taskDateValue?`(${taskDateValue.getDate()}/${taskDateValue.getMonth()+1}/${(taskDateValue.getFullYear())%100})`:''}`;
+            resultValue += string +'\n';
+        });
+        document.getElementById(`${type}-raw-text`).value= resultValue;
+
+    } catch (error) {
+        console.error('Error fetching tasks:', error);
+    }
+}
+
 let draggedItem = null; 
 let placeholder = document.createElement('div');
 placeholder.classList.add('placeholder');
@@ -165,7 +193,6 @@ function handleDragEnd() {
 
     updateTaskOrder(this.parentElement.id); 
 }
-
 
 async function updateTaskOrder(listId) {
     const listElement = document.getElementById(listId);
@@ -237,11 +264,26 @@ async function fetchNote(){
         document.getElementById('noteText').value = '';
         
         // console.log(note);
+        renderNoteView(note);
         renderNote(note);
     } catch (error) {
         console.error('Error fetching note:', error);
     }
 }
+
+function renderNoteView(note){
+    if (!(note[0])) return;
+    const unsafeHTML = marked.parse(note[0].content);
+
+    const safeHTML = DOMPurify.sanitize(unsafeHTML);
+    
+    noteView.innerHTML = safeHTML;
+}
+
+noteView.addEventListener('click', (e)=>{
+    noteText.style.display='block';
+    noteView.style.display='none';
+});
 
 function renderNote(note) {
     if (!(note[0])) return;
@@ -265,6 +307,8 @@ noteSaveButton.addEventListener('click', async (e) => {
             body: JSON.stringify({ content:noteContent })
         });
         fetchNote(); // Refresh note
+        noteText.style.display='none';
+        noteView.style.display='block';
     } catch (error) {
         console.error('Error adding note:', error);
     }
@@ -399,6 +443,46 @@ async function toggleTaskCompletion(id, is_completed) {
     } catch (error) {
         console.error('Error updating task:', error);
     }
+}
+
+function changeTextView(type){
+    const listInterface = document.getElementById(`${type}-list-interface`);
+    const taskRawTextInterface = document.getElementById(`${type}-taskRawTextInterface`);
+    const taskRawTextSubmitButton = document.getElementById(`${type}-taskRawTextSubmitButton`);
+    listInterface.style.display = 'none';
+    taskRawTextInterface.style.display = 'block';
+
+    fetchTaskInText(type);
+
+    const taskRawText = document.getElementById(`${type}-raw-text`);
+    taskRawTextSubmitButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const taskRawTextValue = taskRawText.value;
+        const token = localStorage.getItem('token');
+        try {
+            if(1){
+                await fetch(`${window.API_BASE_URL}/api/tasks/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ rawText:taskRawTextValue, type})
+                });
+
+            }
+            closeTextView(type);
+            fetchTasks(); // Refresh list
+        } catch (error) {
+            console.error('Error adding task:', error);
+        }
+    }, { once: true });
+}
+
+function closeTextView(type){
+    const listInterface = document.getElementById(`${type}-list-interface`);
+    const taskRawTextInterface = document.getElementById(`${type}-taskRawTextInterface`);
+    listInterface.style.display = 'block';
+    taskRawTextInterface.style.display = 'none';   
 }
 
 // Update statistics

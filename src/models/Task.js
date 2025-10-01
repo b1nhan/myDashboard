@@ -1,27 +1,56 @@
 const db = require('../config/db');
 
 class Task{
-    static async getAllTasks(userID) {
-        const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? order by deadline is null, deadline asc, order_index asc', [userID]);
-        return rows;
+    static async getAllTasks(userID,type) {
+        if(type){
+            const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? AND type = ? order by deadline is null, deadline asc, order_index asc', [userID, type]);
+            return rows;
+        }
+        else{
+            const [rows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? order by deadline is null, deadline asc, order_index asc', [userID]);
+            return rows;
+        }
+    }
+    static async deleteAllTasks(type, userID) {
+        await db.execute('DELETE FROM tasks WHERE type = ? AND user_id = ?', [type, userID]);
     }
 
     static async addNewTask(userID, taskData){
-        const {name, type, deadline, buttonChecked} = taskData;
-
-        const sql = 'INSERT INTO tasks (user_id, name, type, deadline, buttonChecked) VALUE (?,?,?,?,?)';
-
-        const [result] = await db.execute(sql, [userID, name, type, deadline, buttonChecked]);
-
-        return {
-            id: result.insertId,
-            user_id:userID,
-            name,
-            type,
-            deadline,
-            is_completed: false,
-            buttonChecked
+        if ('is_completed' in taskData){
+            const {name, type, deadline, buttonChecked, is_completed} = taskData;
+    
+            const sql = 'INSERT INTO tasks (user_id, name, type, deadline, buttonChecked, is_completed) VALUE (?,?,?,?,?,?)';
+    
+            const [result] = await db.execute(sql, [userID, name, type, deadline, buttonChecked, is_completed]);
+            
+            return {
+                id: result.insertId,
+                user_id:userID,
+                name,
+                type,
+                deadline,
+                is_completed: true,
+                buttonChecked
+            }
         }
+        else{
+            const {name, type, deadline, buttonChecked} = taskData;
+    
+            const sql = 'INSERT INTO tasks (user_id, name, type, deadline, buttonChecked) VALUE (?,?,?,?,?)';
+    
+            const [result] = await db.execute(sql, [userID, name, type, deadline, buttonChecked]);
+
+            return {
+                id: result.insertId,
+                user_id:userID,
+                name,
+                type,
+                deadline,
+                is_completed: false,
+                buttonChecked
+            }
+        }
+
     }
 
     static async updateTaskOrder(userID, tasksIDList) {

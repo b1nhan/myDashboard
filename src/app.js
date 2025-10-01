@@ -12,6 +12,7 @@ const port = process.env.PORT || 3000;
 // middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static('dist'));
 const vercelDomain = 'https://my-dashboard-b1nhan.vercel.app'; 
 app.use(cors({
   origin: vercelDomain,

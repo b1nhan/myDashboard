@@ -138,6 +138,21 @@ body {
     background-color: hsl(122, 39%, 45%);
 }
 
+.btn-edit {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+}
+.btn-edit:hover{
+    background-color: hsl(122, 39%, 45%);
+}
+
 .btn-delete {
     background: none;
     border: none;
