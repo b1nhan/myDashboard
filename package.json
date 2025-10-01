@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "build:css": "tailwindcss -i ./src/input.css -o ./public/output.css --minify",
+    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
