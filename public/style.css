@@ -125,32 +125,52 @@ body {
 
 .btn-add {
     background-color: #4CAF50;
+    border: #4CAF50 2px solid;
     color: white;
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
     border-radius: 6px;
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    border: none;
     white-space: nowrap;
 }
 .btn-add:hover{
     background-color: hsl(122, 39%, 45%);
+    border: hsl(122, 39%, 45%) 2px solid;
+    /* color: hsl(122, 39%, 45%); */
+}
+.btn-add .add-icon .icon-path{
+    stroke: white;
 }
 
 .btn-edit {
-    background-color: #4CAF50;
+    /* background-color: #ffffff; */
+    background-color: white;
     color: white;
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
     border-radius: 6px;
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    border: none;
+    border: #4CAF50 2px solid;
     white-space: nowrap;
 }
 .btn-edit:hover{
-    background-color: hsl(122, 39%, 45%);
+    background-color: hsl(122, 39%, 90%);
+}
+
+.btn-edit .edit-icon .icon-path{
+    /* stroke: hsl(180, 1%, 60%); */
+    stroke:#4CAF50;
+}
+.btn-edit:hover .edit-icon .icon-path{
+    /* stroke: hsl(122, 39%, 45%); */
+}
+
+.edit-icon, .add-icon{
+    width: 32px;
+    height: 32px;
+    padding: 3px 3px;
 }
 
 .btn-delete {
