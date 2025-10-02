@@ -7,7 +7,7 @@ class Note{
     }
 
     static async setNote(userID, noteContent){ 
-        const sql = `INSERT INTO mydashboard_db.note (user_id, content) VALUES (?, ?) AS new_values ON DUPLICATE KEY UPDATE content = new_values.content;  `; 
+        const sql = `INSERT INTO note (user_id, content) VALUES (?, ?) AS new_values ON DUPLICATE KEY UPDATE content = new_values.content;  `; 
 
         const [result] = await db.execute(sql, [userID, noteContent]); 
 
