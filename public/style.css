@@ -13,21 +13,22 @@ body {
 .dashboard-grid {
     display: grid;
     gap: 1.5rem;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
-        "stats  "
-        "checklist1"
-        "checklist2"
-        "checklist3"
-        "checklist4"
-        "textbox";
+    "stats stats stats"
+    "checklist1 checklist2 textbox"
+    "checklist3 checklist4 textbox";
 }
-@media (min-width: 768px) {
+@media (max-width: 768px) {
     .dashboard-grid {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr;
         grid-template-areas:
-            "stats stats stats"
-            "checklist1 checklist2 textbox"
-            "checklist3 checklist4 textbox";
+            "stats  "
+            "checklist1"
+            "checklist2"
+            "checklist3"
+            "checklist4"
+            "textbox";
     }
 }
 .card {
@@ -61,7 +62,32 @@ body {
     font-weight: 600;
     /* border-bottom: 2px solid hsl(0, 0%, 85%);  */
 }
+#stats-header{
+    margin: 0;
+}
+#stats-card { 
+    grid-area: stats; 
+    display: flex; 
+    flex-direction: row; 
+    justify-content: space-around;
+}
 
+@media (max-width:768px){
+    #stats-card{
+        flex-direction: column; 
+        align-items: center;
+    }
+    #stats-header{
+        margin: 0.5rem;
+        justify-content: center;
+    }
+    .stat-item {
+        width: 80%;
+        justify-content: space-between;
+        border-bottom: 1px solid hsl(0, 0%, 85%); 
+
+    }
+}
 .task-list {
     list-style: none;
     padding: 0;
@@ -214,12 +240,11 @@ body {
     text-decoration: none;
     cursor: pointer;
 }
-#stats-card { 
-    grid-area: stats; 
-    display: flex; 
-    flex-direction: row; 
-    justify-content: space-around;
+
+#noteView{
+    max-width: none !important; 
 }
+
 #work-card { grid-area: checklist1; height: 350px; }
 #learning-card { grid-area: checklist2; height: 350px; }
 #life-card { grid-area: checklist3; height: 350px; }
