@@ -291,8 +291,7 @@ function renderNote(note) {
 }
 
 // Update note
-noteSaveButton.addEventListener('click', async (e) => {
-    e.preventDefault();
+async function saveNoteText() {
     const noteContent = noteText.value;
     if(!noteContent) return;
     const token = localStorage.getItem("token");
@@ -312,7 +311,17 @@ noteSaveButton.addEventListener('click', async (e) => {
     } catch (error) {
         console.error('Error adding note:', error);
     }
+}
+noteSaveButton.addEventListener('click',  (e) => {
+    e.preventDefault();
+    saveNoteText();
 });
+noteText.addEventListener('keydown', (e)=>{
+    if(e.ctrlKey && e.key === 'Enter' && noteText.style.display==='block' ){
+        e.preventDefault();
+        saveNoteText();
+    }
+})
 
 // Open Modal
 function openModal(type) {
@@ -332,6 +341,17 @@ function closeModal() {
     taskDateInput.classList.add('hidden');
     taskForm.reset();
 }
+modal.addEventListener('click',(e)=>{
+    if(e.target===modal){
+        closeModal();
+    }
+})
+document.addEventListener('keydown',(e)=>{
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeModal();
+    }
+})
+
 
 // Open Modal Update
 function openModalUpdate(task){
@@ -447,6 +467,7 @@ async function toggleTaskCompletion(id, is_completed) {
 
 function changeTextView(type){
     const listInterface = document.getElementById(`${type}-list-interface`);
+    const taskRawTextField = document.getElementById(`${type}-raw-text`);
     const taskRawTextInterface = document.getElementById(`${type}-taskRawTextInterface`);
     const taskRawTextSubmitButton = document.getElementById(`${type}-taskRawTextSubmitButton`);
     listInterface.style.display = 'none';
@@ -454,28 +475,49 @@ function changeTextView(type){
 
     fetchTaskInText(type);
 
-    const taskRawText = document.getElementById(`${type}-raw-text`);
-    taskRawTextSubmitButton.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const taskRawTextValue = taskRawText.value;
-        const token = localStorage.getItem('token');
-        try {
-            if(1){
-                await fetch(`${window.API_BASE_URL}/api/tasks/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ rawText:taskRawTextValue, type})
-                });
+    taskRawTextSubmitButton.addEventListener('click', saveTaskTextByClick);
+    taskRawTextField.addEventListener('keydown', saveTaskTextByCtrlEnter);
 
-            }
-            closeTextView(type);
-            fetchTasks(); // Refresh list
-        } catch (error) {
-            console.error('Error adding task:', error);
+    function saveTaskTextByClick(e) {
+        e.preventDefault();
+        saveTaskText(type);
+    
+        taskRawTextSubmitButton.removeEventListener('click', saveTaskTextByClick);
+        taskRawTextField.removeEventListener('keydown', saveTaskTextByCtrlEnter);
+    }
+    
+    function saveTaskTextByCtrlEnter(e) {
+        if (e.ctrlKey && e.key === 'Enter' && taskRawTextInterface.style.display === 'block') {
+            e.preventDefault();
+            saveTaskText(type);
+    
+            taskRawTextSubmitButton.removeEventListener('click', saveTaskTextByClick);
+            taskRawTextField.removeEventListener('keydown', saveTaskTextByCtrlEnter);
         }
-    }, { once: true });
+    }
+}
+
+
+async function saveTaskText(type) {
+    const taskRawText = document.getElementById(`${type}-raw-text`);
+    const taskRawTextValue = taskRawText.value;
+    const token = localStorage.getItem('token');
+    try {
+        if(1){
+            await fetch(`${window.API_BASE_URL}/api/tasks/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ rawText:taskRawTextValue, type})
+            });
+
+        }
+        closeTextView(type);
+        fetchTasks(); // Refresh list
+    } catch (error) {
+        console.error('Error adding task:', error);
+    }
 }
 
 function closeTextView(type){
