@@ -54,9 +54,11 @@ body {
     overflow-y: auto;
 }
 .stat-item {
+    border-left:4px solid;
+    border-radius: 8px;
     width: 10rem;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     padding: 0.5rem;
     font-weight: 600;
@@ -71,6 +73,32 @@ body {
     flex-direction: row; 
     justify-content: space-around;
 }
+#total-stats-div{
+    background-color: rgba(0,0,0,0.05);
+}
+#deadlines-stats-div{
+    background-color: rgba(255,0,0,0.05);
+}
+#works-stats-div{
+    background-color: rgba(100,132,240,0.05);
+}
+#learn-stats-div{
+    background-color: rgba(136,211,31,0.05);
+}
+#toDo-stats-div{
+    background-color: rgba(89,65,242,0.05);
+}
+#goals-stats-div{
+    background-color: rgba(239,141,41,0.05);
+}
+
+@media (min-width:768px){
+    .stat-item {
+        min-height: 3rem;
+        margin-left: 0.25rem;
+        margin-right: 0.25rem;
+    }   
+}
 
 @media (max-width:768px){
     #stats-card{
@@ -82,10 +110,14 @@ body {
         justify-content: center;
     }
     .stat-item {
+        max-height: 2.5rem;
+        margin: 0.25rem;
         width: 80%;
         justify-content: space-between;
         border-bottom: 1px solid hsl(0, 0%, 85%); 
-
+    }
+    .stat-item :last-child{
+        border-bottom: none;
     }
 }
 .task-list {
