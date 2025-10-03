@@ -1627,6 +1627,11 @@ video {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
 }
 
+.peer:checked ~ .peer-checked\:bg-green-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(76 175 80 / var(--tw-bg-opacity, 1));
+}
+
 .peer:checked ~ .peer-checked\:after\:translate-x-full::after {
   content: var(--tw-content);
   --tw-translate-x: 100%;

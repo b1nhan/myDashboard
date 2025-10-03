@@ -260,6 +260,12 @@ body {
     max-width: 500px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+#submitButton{
+    background-color: rgb(76, 175, 80);
+}
+#submitButton:hover{
+    background-color: hsl(122, 39%, 45%);
+}
 .close-btn {
     color: #aaa;
     float: right;
