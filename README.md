@@ -56,7 +56,8 @@ Web app quản lý task & deadline với giao diện trực quan, hỗ trợ clo
 
     ```
     // syntax:
-    [] Ten (dd/mm/yy)
+    [] Ten (dd/mm/yy) //Chưa hoàn thành
+    [x] Ten (dd/mm/yy) //Hoàn thành
     ```
 ![myDashboard Manual](docs/screenshots/edit_task_raw_text.png)
 
