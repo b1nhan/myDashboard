@@ -1,60 +1,43 @@
 # myDashboard
 
-Web app quản lý task & deadline với giao diện trực quan, hỗ trợ cloud storage và markdown notes.
+## Giới thiệu  
+**myDashboard** là một ứng dụng web dạng **to-do list /task manager** với thiết kế trực quan, dễ sử dụng. Có tính năng chỉnh sửa [task raw text](#chỉnh-sửa-task-dưới-dạng-raw-text), hỗ trợ [markdown syntax](#tạo-ghi-chú-có-hỗ-trợ-markdown-syntax-cơ-bản), cloud storage và [các tính năng khác](#tính-năng-chính)
 
 ![Screenshot](docs/screenshots/mainpage.png)  
 *(Giao diện chính)*  
 
----
-
-## Giới thiệu  
-**myDashboard** là một ứng dụng web dạng **to-do list /task manager** với thiết kế trực quan, dễ sử dụng. Người dùng có thể:  
-- Tạo, chỉnh sửa, xóa, đánh dấu hoàn thành Task  
-- Thống kê tiến độ công việc, kiểm tra deadline.
-- Ghi chú các thông tin quan trọng.
-- Có thể truy cập ở bất cứ đâu (mobile/ desktop).
-- Giao diện responsive, hoạt động tốt trên cả desktop và mobile  
-
----
-
-## Tính năng chính  
+## Tính năng chính 
 - Tạo, chỉnh sửa, xóa Task.
 - Hỗ trợ chỉnh sửa task dưới dạng raw text.
 - Sắp xếp task theo deadline
 - Kéo, thả để sắp xếp task (có cùng deadline).
-- Lưu trữ trên dữ liệu trên cloud.
 - Ghi chú hỗ trợ markdown syntax cơ bản.
+- Có hỗ trợ tạo/ đăng nhập tài khoản.
+- Lưu trữ dữ liệu trên cloud.
 
----
+## Truy cập và sử dụng
 
-## Tech Stack  
-- **Frontend**: HTML, CSS, JavaScript  
-- **Backend**: Node.js  
-- **Database**: MySQL
-
----
-## Truy cập
 **[Website](https://my-dashboard-b1nhan.vercel.app)**: https://my-dashboard-b1nhan.vercel.app
 
 ## Hướng dẫn chi tiết
 
-- **Tạo tài khoản bằng username và password để bắt đầu**
+- ### Tạo tài khoản bằng username và password để bắt đầu
 
 ![myDashboard Manual](docs/screenshots/register.png)
 
-- **Đăng nhập bằng tài khoản vừa tạo**
+- ### Đăng nhập bằng tài khoản vừa tạo
 
 ![myDashboard Manual](docs/screenshots/login.png)
 
-- **Tạo task**
+- ### Tạo task
 
 ![myDashboard Manual](docs/screenshots/add_task.png)
 
-- **Sửa task**
+- ### Sửa task
 
 ![myDashboard Manual](docs/screenshots/edit_task.png)
 
-- **Chỉnh sửa task dưới dạng raw text**
+- ### Chỉnh sửa task dưới dạng raw text
 
     ```
     // syntax:
@@ -63,35 +46,25 @@ Web app quản lý task & deadline với giao diện trực quan, hỗ trợ clo
     ```
 ![myDashboard Manual](docs/screenshots/edit_task_raw_text.png)
 
-- **Kéo thả task**
+- ### Kéo thả task (chỉ áp dụng với task có cùng deadline)
 
 ![myDashboard Manual](docs/screenshots/drag_task.gif)
 
-- **Tạo ghi chú (có hỗ trợ markdown syntax cơ bản)**
+- ### Tạo ghi chú (có hỗ trợ markdown syntax cơ bản)
 
 ![myDashboard Manual](docs/screenshots/add_note_markdown_syntax.gif)
 
 
----
-
-## Mục đích
-
-> **Project này được tạo ra với mục đích giúp người dùng có thể quan sát, theo dõi, thống kê tiến độ các công việc của mình từ đó cải thiện hiệu suất công việc.**
-
-> *Ngoài ra đây cũng là project showcase, tập trung vào kỹ năng frontend, backend và database cơ bản.*
-
----
 
 ## Author
 * **Author**: **[b1nhan](https://github.com/b1nhan)**
 
----
+
 
 ## Acknowledgements
 
 * **ChadBot**: *[CheatGPT](https://chatgpt.com)*, *[GemiNice](https://gemini.google.com)*, *[Clonede](https://claude.ai)*
 
 
----
 
 > *Hope you enjoy <3*
