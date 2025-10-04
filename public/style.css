@@ -4,6 +4,7 @@ body {
     background-color: #f3f4f6;
     color: #1f2937;
     padding: 2rem;
+    padding-bottom: 0;
     padding-top: 1rem;
 }
 .container {
@@ -289,3 +290,82 @@ body {
 #goals-card { grid-area: checklist4; height: 350px; }
 #notes-card {grid-area: textbox; height: 715px;}
 #notes-card textarea { min-height: 80%;}
+
+
+.footer {
+    /* border-top: #1f2937 1px solid; */
+    color: #1f2937;
+    margin-top: 7rem;
+    padding-top: 0.5rem;
+    padding: 0.25rem;
+    margin-bottom:0;
+}
+
+.footer-item{
+    margin-left:1.5rem;
+}
+
+.footer-content{
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+
+.action-btn{
+    display: flex;
+}
+
+.report-icon svg, .github-icon svg, .star-icon svg{
+    width: 24px;
+    height: 24px;
+}
+
+.report-icon, .github-icon, .star-icon{
+    background-color: hsl(0, 0%, 90%);
+    padding: 1.5px;
+    border: hsla(215, 28%, 17%, 0.4) 2px solid;
+    border-radius: 3px;
+    /* box-shadow: hsl(0, 0%, 70%) 0 0 2px ; */
+    margin: 2px;
+    align-items: center;
+    cursor: pointer;
+
+    /* for tooltip */
+    position: relative;
+    display: inline-block;
+}
+.report-icon:hover, .github-icon:hover, .star-icon:hover{
+    background-color: hsl(0, 0%, 85%);
+}
+
+.star-icon #star-counting{
+    padding-right: 2px;
+}
+
+.star-icon{
+    display: flex;
+}
+
+
+.tooltip-text {
+  visibility: hidden; /* ban đầu ẩn */
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: hsl(0, 0%, 85%);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  position: absolute;
+  bottom: 125%; /* đẩy lên trên icon */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.report-icon:hover .tooltip-text, .github-icon:hover .tooltip-text, .star-icon:hover:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}

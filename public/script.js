@@ -583,6 +583,18 @@ async function displayUsername(){
     })
 }
 
+async function fetchStarRepo() {
+    try{
+        const response= await fetch("https://api.github.com/repos/b1nhan/myDashboard");
+        const content = await response.json();
+        const starCouting = document.getElementById('star-counting');
+        starCouting.textContent= content.stargazers_count;
+    }
+    catch(err){
+        console.log('error get stargazers count ', err);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', ()=>{
     if (!isLoggedIn()) {
     redirectToLogin();
@@ -592,6 +604,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     displayUsername();
     fetchTasks();
     fetchNote();
+    fetchStarRepo();
   }
 });
 
